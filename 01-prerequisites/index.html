@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Prerequisites - Kubernetes The Hard Way</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Prerequisites";
+    var mkdocs_page_input_path = "01-prerequisites.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes The Hard Way</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../readme.md">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Prerequisites</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#prerequisites">Prerequisites</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#google-cloud-platform">Google Cloud Platform</a></li>
+        
+            <li><a class="toctree-l3" href="#google-cloud-platform-sdk">Google Cloud Platform SDK</a></li>
+        
+            <li><a class="toctree-l3" href="#running-commands-in-parallel-with-tmux">Running Commands in Parallel with tmux</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../02-client-tools/">Installing the Client Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../03-compute-resources/">Provisioning Compute Resources</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../04-certificate-authority/">Provisioning the CA and Generating TLS Certificates</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../05-kubernetes-configuration-files/">Generating Kubernetes Configuration Files for Authentication</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../07-bootstrapping-etcd/">Bootstrapping the etcd Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../08-bootstrapping-kubernetes-controllers/">Bootstrapping the Kubernetes Control Plane</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../09-bootstrapping-kubernetes-workers/">Bootstrapping the Kubernetes Worker Nodes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10-configuring-kubectl/">Configuring kubectl for Remote Access</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11-pod-network-routes/">Provisioning Pod Network Routes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12-dns-addon/">Deploying the DNS Cluster Add-on</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../13-smoke-test/">Smoke Test</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../14-cleanup/">Cleaning Up</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes The Hard Way</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Prerequisites</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="prerequisites">Prerequisites</h1>
+<h2 id="google-cloud-platform">Google Cloud Platform</h2>
+<p>This tutorial leverages the <a href="https://cloud.google.com/">Google Cloud Platform</a> to streamline provisioning of the compute infrastructure required to bootstrap a Kubernetes cluster from the ground up. <a href="https://cloud.google.com/free/">Sign up</a> for $300 in free credits.</p>
+<p><a href="https://cloud.google.com/products/calculator/#id=55663256-c384-449c-9306-e39893e23afb">Estimated cost</a> to run this tutorial: $0.23 per hour ($5.46 per day).</p>
+<blockquote>
+<p>The compute resources required for this tutorial exceed the Google Cloud Platform free tier.</p>
+</blockquote>
+<h2 id="google-cloud-platform-sdk">Google Cloud Platform SDK</h2>
+<h3 id="install-the-google-cloud-sdk">Install the Google Cloud SDK</h3>
+<p>Follow the Google Cloud SDK <a href="https://cloud.google.com/sdk/">documentation</a> to install and configure the <code>gcloud</code> command line utility.</p>
+<p>Verify the Google Cloud SDK version is 262.0.0 or higher:</p>
+<pre><code>gcloud version
+</code></pre>
+
+<h3 id="set-a-default-compute-region-and-zone">Set a Default Compute Region and Zone</h3>
+<p>This tutorial assumes a default compute region and zone have been configured.</p>
+<p>If you are using the <code>gcloud</code> command-line tool for the first time <code>init</code> is the easiest way to do this:</p>
+<pre><code>gcloud init
+</code></pre>
+
+<p>Then be sure to authorize gcloud to access the Cloud Platform with your Google user credentials:</p>
+<pre><code>gcloud auth login
+</code></pre>
+
+<p>Next set a default compute region and compute zone:</p>
+<pre><code>gcloud config set compute/region us-west1
+</code></pre>
+
+<p>Set a default compute zone:</p>
+<pre><code>gcloud config set compute/zone us-west1-c
+</code></pre>
+
+<blockquote>
+<p>Use the <code>gcloud compute zones list</code> command to view additional regions and zones.</p>
+</blockquote>
+<h2 id="running-commands-in-parallel-with-tmux">Running Commands in Parallel with tmux</h2>
+<p><a href="https://github.com/tmux/tmux/wiki">tmux</a> can be used to run commands on multiple compute instances at the same time. Labs in this tutorial may require running the same commands across multiple compute instances, in those cases consider using tmux and splitting a window into multiple panes with synchronize-panes enabled to speed up the provisioning process.</p>
+<blockquote>
+<p>The use of tmux is optional and not required to complete this tutorial.</p>
+</blockquote>
+<p><img alt="tmux screenshot" src="../images/tmux-screenshot.png" /></p>
+<blockquote>
+<p>Enable synchronize-panes by pressing <code>ctrl+b</code> followed by <code>shift+:</code>. Next type <code>set synchronize-panes on</code> at the prompt. To disable synchronization: <code>set synchronize-panes off</code>.</p>
+</blockquote>
+<p>Next: <a href="../02-client-tools/">Installing the Client Tools</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../02-client-tools/" class="btn btn-neutral float-right" title="Installing the Client Tools">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+        <span style="margin-left: 15px"><a href="../02-client-tools/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

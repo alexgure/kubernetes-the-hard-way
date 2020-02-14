@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Installing the Client Tools - Kubernetes The Hard Way</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Installing the Client Tools";
+    var mkdocs_page_input_path = "02-client-tools.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes The Hard Way</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../readme.md">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../01-prerequisites/">Prerequisites</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Installing the Client Tools</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#installing-the-client-tools">Installing the Client Tools</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#install-cfssl">Install CFSSL</a></li>
+        
+            <li><a class="toctree-l3" href="#install-kubectl">Install kubectl</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../03-compute-resources/">Provisioning Compute Resources</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../04-certificate-authority/">Provisioning the CA and Generating TLS Certificates</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../05-kubernetes-configuration-files/">Generating Kubernetes Configuration Files for Authentication</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../07-bootstrapping-etcd/">Bootstrapping the etcd Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../08-bootstrapping-kubernetes-controllers/">Bootstrapping the Kubernetes Control Plane</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../09-bootstrapping-kubernetes-workers/">Bootstrapping the Kubernetes Worker Nodes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10-configuring-kubectl/">Configuring kubectl for Remote Access</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11-pod-network-routes/">Provisioning Pod Network Routes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12-dns-addon/">Deploying the DNS Cluster Add-on</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../13-smoke-test/">Smoke Test</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../14-cleanup/">Cleaning Up</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes The Hard Way</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Installing the Client Tools</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="installing-the-client-tools">Installing the Client Tools</h1>
+<p>In this lab you will install the command line utilities required to complete this tutorial: <a href="https://github.com/cloudflare/cfssl">cfssl</a>, <a href="https://github.com/cloudflare/cfssl">cfssljson</a>, and <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl">kubectl</a>.</p>
+<h2 id="install-cfssl">Install CFSSL</h2>
+<p>The <code>cfssl</code> and <code>cfssljson</code> command line utilities will be used to provision a <a href="https://en.wikipedia.org/wiki/Public_key_infrastructure">PKI Infrastructure</a> and generate TLS certificates.</p>
+<p>Download and install <code>cfssl</code> and <code>cfssljson</code>:</p>
+<h3 id="os-x">OS X</h3>
+<pre><code>curl -o cfssl https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/darwin/cfssl
+curl -o cfssljson https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/darwin/cfssljson
+</code></pre>
+
+<pre><code>chmod +x cfssl cfssljson
+</code></pre>
+
+<pre><code>sudo mv cfssl cfssljson /usr/local/bin/
+</code></pre>
+
+<p>Some OS X users may experience problems using the pre-built binaries in which case <a href="https://brew.sh">Homebrew</a> might be a better option:</p>
+<pre><code>brew install cfssl
+</code></pre>
+
+<h3 id="linux">Linux</h3>
+<pre><code>wget -q --show-progress --https-only --timestamping \
+  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/linux/cfssl \
+  https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/linux/cfssljson
+</code></pre>
+
+<pre><code>chmod +x cfssl cfssljson
+</code></pre>
+
+<pre><code>sudo mv cfssl cfssljson /usr/local/bin/
+</code></pre>
+
+<h3 id="verification">Verification</h3>
+<p>Verify <code>cfssl</code> and <code>cfssljson</code> version 1.3.4 or higher is installed:</p>
+<pre><code>cfssl version
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>Version: 1.3.4
+Revision: dev
+Runtime: go1.13
+</code></pre>
+
+<pre><code>cfssljson --version
+</code></pre>
+
+<pre><code>Version: 1.3.4
+Revision: dev
+Runtime: go1.13
+</code></pre>
+
+<h2 id="install-kubectl">Install kubectl</h2>
+<p>The <code>kubectl</code> command line utility is used to interact with the Kubernetes API Server. Download and install <code>kubectl</code> from the official release binaries:</p>
+<h3 id="os-x_1">OS X</h3>
+<pre><code>curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/darwin/amd64/kubectl
+</code></pre>
+
+<pre><code>chmod +x kubectl
+</code></pre>
+
+<pre><code>sudo mv kubectl /usr/local/bin/
+</code></pre>
+
+<h3 id="linux_1">Linux</h3>
+<pre><code>wget https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/linux/amd64/kubectl
+</code></pre>
+
+<pre><code>chmod +x kubectl
+</code></pre>
+
+<pre><code>sudo mv kubectl /usr/local/bin/
+</code></pre>
+
+<h3 id="verification_1">Verification</h3>
+<p>Verify <code>kubectl</code> version 1.15.3 or higher is installed:</p>
+<pre><code>kubectl version --client
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;15&quot;, GitVersion:&quot;v1.15.3&quot;, GitCommit:&quot;2d3c76f9091b6bec110a5e63777c332469e0cba2&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2019-08-19T11:13:54Z&quot;, GoVersion:&quot;go1.12.9&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
+</code></pre>
+
+<p>Next: <a href="../03-compute-resources/">Provisioning Compute Resources</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../03-compute-resources/" class="btn btn-neutral float-right" title="Provisioning Compute Resources">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../01-prerequisites/" class="btn btn-neutral" title="Prerequisites"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../01-prerequisites/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../03-compute-resources/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

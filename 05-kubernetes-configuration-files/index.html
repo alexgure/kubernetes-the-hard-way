@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Generating Kubernetes Configuration Files for Authentication - Kubernetes The Hard Way</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Generating Kubernetes Configuration Files for Authentication";
+    var mkdocs_page_input_path = "05-kubernetes-configuration-files.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes The Hard Way</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../readme.md">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../01-prerequisites/">Prerequisites</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../02-client-tools/">Installing the Client Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../03-compute-resources/">Provisioning Compute Resources</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../04-certificate-authority/">Provisioning the CA and Generating TLS Certificates</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Generating Kubernetes Configuration Files for Authentication</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#generating-kubernetes-configuration-files-for-authentication">Generating Kubernetes Configuration Files for Authentication</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#client-authentication-configs">Client Authentication Configs</a></li>
+        
+            <li><a class="toctree-l3" href="#distribute-the-kubernetes-configuration-files">Distribute the Kubernetes Configuration Files</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../07-bootstrapping-etcd/">Bootstrapping the etcd Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../08-bootstrapping-kubernetes-controllers/">Bootstrapping the Kubernetes Control Plane</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../09-bootstrapping-kubernetes-workers/">Bootstrapping the Kubernetes Worker Nodes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10-configuring-kubectl/">Configuring kubectl for Remote Access</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11-pod-network-routes/">Provisioning Pod Network Routes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12-dns-addon/">Deploying the DNS Cluster Add-on</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../13-smoke-test/">Smoke Test</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../14-cleanup/">Cleaning Up</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes The Hard Way</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Generating Kubernetes Configuration Files for Authentication</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="generating-kubernetes-configuration-files-for-authentication">Generating Kubernetes Configuration Files for Authentication</h1>
+<p>In this lab you will generate <a href="https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/">Kubernetes configuration files</a>, also known as kubeconfigs, which enable Kubernetes clients to locate and authenticate to the Kubernetes API Servers.</p>
+<h2 id="client-authentication-configs">Client Authentication Configs</h2>
+<p>In this section you will generate kubeconfig files for the <code>controller manager</code>, <code>kubelet</code>, <code>kube-proxy</code>, and <code>scheduler</code> clients and the <code>admin</code> user.</p>
+<h3 id="kubernetes-public-ip-address">Kubernetes Public IP Address</h3>
+<p>Each kubeconfig requires a Kubernetes API Server to connect to. To support high availability the IP address assigned to the external load balancer fronting the Kubernetes API Servers will be used.</p>
+<p>Retrieve the <code>kubernetes-the-hard-way</code> static IP address:</p>
+<pre><code>KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+</code></pre>
+
+<h3 id="the-kubelet-kubernetes-configuration-file">The kubelet Kubernetes Configuration File</h3>
+<p>When generating kubeconfig files for Kubelets the client certificate matching the Kubelet's node name must be used. This will ensure Kubelets are properly authorized by the Kubernetes <a href="https://kubernetes.io/docs/admin/authorization/node/">Node Authorizer</a>.</p>
+<blockquote>
+<p>The following commands must be run in the same directory used to generate the SSL certificates during the <a href="../04-certificate-authority/">Generating TLS Certificates</a> lab.</p>
+</blockquote>
+<p>Generate a kubeconfig file for each worker node:</p>
+<pre><code>for instance in worker-0 worker-1 worker-2; do
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+    --kubeconfig=${instance}.kubeconfig
+
+  kubectl config set-credentials system:node:${instance} \
+    --client-certificate=${instance}.pem \
+    --client-key=${instance}-key.pem \
+    --embed-certs=true \
+    --kubeconfig=${instance}.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:node:${instance} \
+    --kubeconfig=${instance}.kubeconfig
+
+  kubectl config use-context default --kubeconfig=${instance}.kubeconfig
+done
+</code></pre>
+
+<p>Results:</p>
+<pre><code>worker-0.kubeconfig
+worker-1.kubeconfig
+worker-2.kubeconfig
+</code></pre>
+
+<h3 id="the-kube-proxy-kubernetes-configuration-file">The kube-proxy Kubernetes Configuration File</h3>
+<p>Generate a kubeconfig file for the <code>kube-proxy</code> service:</p>
+<pre><code>{
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
+    --kubeconfig=kube-proxy.kubeconfig
+
+  kubectl config set-credentials system:kube-proxy \
+    --client-certificate=kube-proxy.pem \
+    --client-key=kube-proxy-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-proxy.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-proxy \
+    --kubeconfig=kube-proxy.kubeconfig
+
+  kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-proxy.kubeconfig
+</code></pre>
+
+<h3 id="the-kube-controller-manager-kubernetes-configuration-file">The kube-controller-manager Kubernetes Configuration File</h3>
+<p>Generate a kubeconfig file for the <code>kube-controller-manager</code> service:</p>
+<pre><code>{
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=kube-controller-manager.kubeconfig
+
+  kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=kube-controller-manager.pem \
+    --client-key=kube-controller-manager-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-controller-manager.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-controller-manager \
+    --kubeconfig=kube-controller-manager.kubeconfig
+
+  kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-controller-manager.kubeconfig
+</code></pre>
+
+<h3 id="the-kube-scheduler-kubernetes-configuration-file">The kube-scheduler Kubernetes Configuration File</h3>
+<p>Generate a kubeconfig file for the <code>kube-scheduler</code> service:</p>
+<pre><code>{
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=kube-scheduler.kubeconfig
+
+  kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=kube-scheduler.pem \
+    --client-key=kube-scheduler-key.pem \
+    --embed-certs=true \
+    --kubeconfig=kube-scheduler.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-scheduler \
+    --kubeconfig=kube-scheduler.kubeconfig
+
+  kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-scheduler.kubeconfig
+</code></pre>
+
+<h3 id="the-admin-kubernetes-configuration-file">The admin Kubernetes Configuration File</h3>
+<p>Generate a kubeconfig file for the <code>admin</code> user:</p>
+<pre><code>{
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=admin.kubeconfig
+
+  kubectl config set-credentials admin \
+    --client-certificate=admin.pem \
+    --client-key=admin-key.pem \
+    --embed-certs=true \
+    --kubeconfig=admin.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=admin \
+    --kubeconfig=admin.kubeconfig
+
+  kubectl config use-context default --kubeconfig=admin.kubeconfig
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>admin.kubeconfig
+</code></pre>
+
+<h2 id="_1"></h2>
+<h2 id="distribute-the-kubernetes-configuration-files">Distribute the Kubernetes Configuration Files</h2>
+<p>Copy the appropriate <code>kubelet</code> and <code>kube-proxy</code> kubeconfig files to each worker instance:</p>
+<pre><code>for instance in worker-0 worker-1 worker-2; do
+  gcloud compute scp ${instance}.kubeconfig kube-proxy.kubeconfig ${instance}:~/
+done
+</code></pre>
+
+<p>Copy the appropriate <code>kube-controller-manager</code> and <code>kube-scheduler</code> kubeconfig files to each controller instance:</p>
+<pre><code>for instance in controller-0 controller-1 controller-2; do
+  gcloud compute scp admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig ${instance}:~/
+done
+</code></pre>
+
+<p>Next: <a href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../06-data-encryption-keys/" class="btn btn-neutral float-right" title="Generating the Data Encryption Config and Key">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../04-certificate-authority/" class="btn btn-neutral" title="Provisioning the CA and Generating TLS Certificates"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../04-certificate-authority/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../06-data-encryption-keys/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

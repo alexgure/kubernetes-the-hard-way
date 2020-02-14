@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Provisioning the CA and Generating TLS Certificates - Kubernetes The Hard Way</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Provisioning the CA and Generating TLS Certificates";
+    var mkdocs_page_input_path = "04-certificate-authority.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes The Hard Way</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../readme.md">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../01-prerequisites/">Prerequisites</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../02-client-tools/">Installing the Client Tools</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../03-compute-resources/">Provisioning Compute Resources</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Provisioning the CA and Generating TLS Certificates</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#provisioning-a-ca-and-generating-tls-certificates">Provisioning a CA and Generating TLS Certificates</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#certificate-authority">Certificate Authority</a></li>
+        
+            <li><a class="toctree-l3" href="#client-and-server-certificates">Client and Server Certificates</a></li>
+        
+            <li><a class="toctree-l3" href="#the-service-account-key-pair">The Service Account Key Pair</a></li>
+        
+            <li><a class="toctree-l3" href="#distribute-the-client-and-server-certificates">Distribute the Client and Server Certificates</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../05-kubernetes-configuration-files/">Generating Kubernetes Configuration Files for Authentication</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../07-bootstrapping-etcd/">Bootstrapping the etcd Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../08-bootstrapping-kubernetes-controllers/">Bootstrapping the Kubernetes Control Plane</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../09-bootstrapping-kubernetes-workers/">Bootstrapping the Kubernetes Worker Nodes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10-configuring-kubectl/">Configuring kubectl for Remote Access</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11-pod-network-routes/">Provisioning Pod Network Routes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12-dns-addon/">Deploying the DNS Cluster Add-on</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../13-smoke-test/">Smoke Test</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../14-cleanup/">Cleaning Up</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes The Hard Way</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Provisioning the CA and Generating TLS Certificates</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="provisioning-a-ca-and-generating-tls-certificates">Provisioning a CA and Generating TLS Certificates</h1>
+<p>In this lab you will provision a <a href="https://en.wikipedia.org/wiki/Public_key_infrastructure">PKI Infrastructure</a> using CloudFlare's PKI toolkit, <a href="https://github.com/cloudflare/cfssl">cfssl</a>, then use it to bootstrap a Certificate Authority, and generate TLS certificates for the following components: etcd, kube-apiserver, kube-controller-manager, kube-scheduler, kubelet, and kube-proxy.</p>
+<h2 id="certificate-authority">Certificate Authority</h2>
+<p>In this section you will provision a Certificate Authority that can be used to generate additional TLS certificates.</p>
+<p>Generate the CA configuration file, certificate, and private key:</p>
+<pre><code>{
+
+cat &gt; ca-config.json &lt;&lt;EOF
+{
+  &quot;signing&quot;: {
+    &quot;default&quot;: {
+      &quot;expiry&quot;: &quot;8760h&quot;
+    },
+    &quot;profiles&quot;: {
+      &quot;kubernetes&quot;: {
+        &quot;usages&quot;: [&quot;signing&quot;, &quot;key encipherment&quot;, &quot;server auth&quot;, &quot;client auth&quot;],
+        &quot;expiry&quot;: &quot;8760h&quot;
+      }
+    }
+  }
+}
+EOF
+
+cat &gt; ca-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;Kubernetes&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;Kubernetes&quot;,
+      &quot;OU&quot;: &quot;CA&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>ca-key.pem
+ca.pem
+</code></pre>
+
+<h2 id="client-and-server-certificates">Client and Server Certificates</h2>
+<p>In this section you will generate client and server certificates for each Kubernetes component and a client certificate for the Kubernetes <code>admin</code> user.</p>
+<h3 id="the-admin-client-certificate">The Admin Client Certificate</h3>
+<p>Generate the <code>admin</code> client certificate and private key:</p>
+<pre><code>{
+
+cat &gt; admin-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;admin&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;system:masters&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>admin-key.pem
+admin.pem
+</code></pre>
+
+<h3 id="the-kubelet-client-certificates">The Kubelet Client Certificates</h3>
+<p>Kubernetes uses a <a href="https://kubernetes.io/docs/admin/authorization/node/">special-purpose authorization mode</a> called Node Authorizer, that specifically authorizes API requests made by <a href="https://kubernetes.io/docs/concepts/overview/components/#kubelet">Kubelets</a>. In order to be authorized by the Node Authorizer, Kubelets must use a credential that identifies them as being in the <code>system:nodes</code> group, with a username of <code>system:node:&lt;nodeName&gt;</code>. In this section you will create a certificate for each Kubernetes worker node that meets the Node Authorizer requirements.</p>
+<p>Generate a certificate and private key for each Kubernetes worker node:</p>
+<pre><code>for instance in worker-0 worker-1 worker-2; do
+cat &gt; ${instance}-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;system:node:${instance}&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;system:nodes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+EXTERNAL_IP=$(gcloud compute instances describe ${instance} \
+  --format 'value(networkInterfaces[0].accessConfigs[0].natIP)')
+
+INTERNAL_IP=$(gcloud compute instances describe ${instance} \
+  --format 'value(networkInterfaces[0].networkIP)')
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=${instance},${EXTERNAL_IP},${INTERNAL_IP} \
+  -profile=kubernetes \
+  ${instance}-csr.json | cfssljson -bare ${instance}
+done
+</code></pre>
+
+<p>Results:</p>
+<pre><code>worker-0-key.pem
+worker-0.pem
+worker-1-key.pem
+worker-1.pem
+worker-2-key.pem
+worker-2.pem
+</code></pre>
+
+<h3 id="the-controller-manager-client-certificate">The Controller Manager Client Certificate</h3>
+<p>Generate the <code>kube-controller-manager</code> client certificate and private key:</p>
+<pre><code>{
+
+cat &gt; kube-controller-manager-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;system:kube-controller-manager&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;system:kube-controller-manager&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-controller-manager-key.pem
+kube-controller-manager.pem
+</code></pre>
+
+<h3 id="the-kube-proxy-client-certificate">The Kube Proxy Client Certificate</h3>
+<p>Generate the <code>kube-proxy</code> client certificate and private key:</p>
+<pre><code>{
+
+cat &gt; kube-proxy-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;system:kube-proxy&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;system:node-proxier&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-proxy-csr.json | cfssljson -bare kube-proxy
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-proxy-key.pem
+kube-proxy.pem
+</code></pre>
+
+<h3 id="the-scheduler-client-certificate">The Scheduler Client Certificate</h3>
+<p>Generate the <code>kube-scheduler</code> client certificate and private key:</p>
+<pre><code>{
+
+cat &gt; kube-scheduler-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;system:kube-scheduler&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;system:kube-scheduler&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>kube-scheduler-key.pem
+kube-scheduler.pem
+</code></pre>
+
+<h3 id="the-kubernetes-api-server-certificate">The Kubernetes API Server Certificate</h3>
+<p>The <code>kubernetes-the-hard-way</code> static IP address will be included in the list of subject alternative names for the Kubernetes API Server certificate. This will ensure the certificate can be validated by remote clients.</p>
+<p>Generate the Kubernetes API Server certificate and private key:</p>
+<pre><code>{
+
+KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+
+KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+
+cat &gt; kubernetes-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;kubernetes&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;Kubernetes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=10.32.0.1,10.240.0.10,10.240.0.11,10.240.0.12,${KUBERNETES_PUBLIC_ADDRESS},127.0.0.1,${KUBERNETES_HOSTNAMES} \
+  -profile=kubernetes \
+  kubernetes-csr.json | cfssljson -bare kubernetes
+
+}
+</code></pre>
+
+<blockquote>
+<p>The Kubernetes API server is automatically assigned the <code>kubernetes</code> internal dns name, which will be linked to the first IP address (<code>10.32.0.1</code>) from the address range (<code>10.32.0.0/24</code>) reserved for internal cluster services during the <a href="../08-bootstrapping-kubernetes-controllers/#configure-the-kubernetes-api-server">control plane bootstrapping</a> lab.</p>
+</blockquote>
+<p>Results:</p>
+<pre><code>kubernetes-key.pem
+kubernetes.pem
+</code></pre>
+
+<h2 id="the-service-account-key-pair">The Service Account Key Pair</h2>
+<p>The Kubernetes Controller Manager leverages a key pair to generate and sign service account tokens as described in the <a href="https://kubernetes.io/docs/admin/service-accounts-admin/">managing service accounts</a> documentation.</p>
+<p>Generate the <code>service-account</code> certificate and private key:</p>
+<pre><code>{
+
+cat &gt; service-account-csr.json &lt;&lt;EOF
+{
+  &quot;CN&quot;: &quot;service-accounts&quot;,
+  &quot;key&quot;: {
+    &quot;algo&quot;: &quot;rsa&quot;,
+    &quot;size&quot;: 2048
+  },
+  &quot;names&quot;: [
+    {
+      &quot;C&quot;: &quot;US&quot;,
+      &quot;L&quot;: &quot;Portland&quot;,
+      &quot;O&quot;: &quot;Kubernetes&quot;,
+      &quot;OU&quot;: &quot;Kubernetes The Hard Way&quot;,
+      &quot;ST&quot;: &quot;Oregon&quot;
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  service-account-csr.json | cfssljson -bare service-account
+
+}
+</code></pre>
+
+<p>Results:</p>
+<pre><code>service-account-key.pem
+service-account.pem
+</code></pre>
+
+<h2 id="distribute-the-client-and-server-certificates">Distribute the Client and Server Certificates</h2>
+<p>Copy the appropriate certificates and private keys to each worker instance:</p>
+<pre><code>for instance in worker-0 worker-1 worker-2; do
+  gcloud compute scp ca.pem ${instance}-key.pem ${instance}.pem ${instance}:~/
+done
+</code></pre>
+
+<p>Copy the appropriate certificates and private keys to each controller instance:</p>
+<pre><code>for instance in controller-0 controller-1 controller-2; do
+  gcloud compute scp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
+    service-account-key.pem service-account.pem ${instance}:~/
+done
+</code></pre>
+
+<blockquote>
+<p>The <code>kube-proxy</code>, <code>kube-controller-manager</code>, <code>kube-scheduler</code>, and <code>kubelet</code> client certificates will be used to generate client authentication configuration files in the next lab.</p>
+</blockquote>
+<p>Next: <a href="../05-kubernetes-configuration-files/">Generating Kubernetes Configuration Files for Authentication</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../05-kubernetes-configuration-files/" class="btn btn-neutral float-right" title="Generating Kubernetes Configuration Files for Authentication">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../03-compute-resources/" class="btn btn-neutral" title="Provisioning Compute Resources"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../03-compute-resources/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../05-kubernetes-configuration-files/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

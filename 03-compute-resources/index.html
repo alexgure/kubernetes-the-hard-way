@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Provisioning Compute Resources - Kubernetes The Hard Way</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Provisioning Compute Resources";
+    var mkdocs_page_input_path = "03-compute-resources.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes The Hard Way</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../readme.md">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../01-prerequisites/">Prerequisites</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../02-client-tools/">Installing the Client Tools</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Provisioning Compute Resources</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#provisioning-compute-resources">Provisioning Compute Resources</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#networking">Networking</a></li>
+        
+            <li><a class="toctree-l3" href="#compute-instances">Compute Instances</a></li>
+        
+            <li><a class="toctree-l3" href="#configuring-ssh-access">Configuring SSH Access</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../04-certificate-authority/">Provisioning the CA and Generating TLS Certificates</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../05-kubernetes-configuration-files/">Generating Kubernetes Configuration Files for Authentication</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../06-data-encryption-keys/">Generating the Data Encryption Config and Key</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../07-bootstrapping-etcd/">Bootstrapping the etcd Cluster</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../08-bootstrapping-kubernetes-controllers/">Bootstrapping the Kubernetes Control Plane</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../09-bootstrapping-kubernetes-workers/">Bootstrapping the Kubernetes Worker Nodes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../10-configuring-kubectl/">Configuring kubectl for Remote Access</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../11-pod-network-routes/">Provisioning Pod Network Routes</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../12-dns-addon/">Deploying the DNS Cluster Add-on</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../13-smoke-test/">Smoke Test</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../14-cleanup/">Cleaning Up</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes The Hard Way</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Provisioning Compute Resources</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="provisioning-compute-resources">Provisioning Compute Resources</h1>
+<p>Kubernetes requires a set of machines to host the Kubernetes control plane and the worker nodes where containers are ultimately run. In this lab you will provision the compute resources required for running a secure and highly available Kubernetes cluster across a single <a href="https://cloud.google.com/compute/docs/regions-zones/regions-zones">compute zone</a>.</p>
+<blockquote>
+<p>Ensure a default compute zone and region have been set as described in the <a href="../01-prerequisites/#set-a-default-compute-region-and-zone">Prerequisites</a> lab.</p>
+</blockquote>
+<h2 id="networking">Networking</h2>
+<p>The Kubernetes <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#kubernetes-model">networking model</a> assumes a flat network in which containers and nodes can communicate with each other. In cases where this is not desired <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">network policies</a> can limit how groups of containers are allowed to communicate with each other and external network endpoints.</p>
+<blockquote>
+<p>Setting up network policies is out of scope for this tutorial.</p>
+</blockquote>
+<h3 id="virtual-private-cloud-network">Virtual Private Cloud Network</h3>
+<p>In this section a dedicated <a href="https://cloud.google.com/compute/docs/networks-and-firewalls#networks">Virtual Private Cloud</a> (VPC) network will be setup to host the Kubernetes cluster.</p>
+<p>Create the <code>kubernetes-the-hard-way</code> custom VPC network:</p>
+<pre><code>gcloud compute networks create kubernetes-the-hard-way --subnet-mode custom
+</code></pre>
+
+<p>A <a href="https://cloud.google.com/compute/docs/vpc/#vpc_networks_and_subnets">subnet</a> must be provisioned with an IP address range large enough to assign a private IP address to each node in the Kubernetes cluster.</p>
+<p>Create the <code>kubernetes</code> subnet in the <code>kubernetes-the-hard-way</code> VPC network:</p>
+<pre><code>gcloud compute networks subnets create kubernetes \
+  --network kubernetes-the-hard-way \
+  --range 10.240.0.0/24
+</code></pre>
+
+<blockquote>
+<p>The <code>10.240.0.0/24</code> IP address range can host up to 254 compute instances.</p>
+</blockquote>
+<h3 id="firewall-rules">Firewall Rules</h3>
+<p>Create a firewall rule that allows internal communication across all protocols:</p>
+<pre><code>gcloud compute firewall-rules create kubernetes-the-hard-way-allow-internal \
+  --allow tcp,udp,icmp \
+  --network kubernetes-the-hard-way \
+  --source-ranges 10.240.0.0/24,10.200.0.0/16
+</code></pre>
+
+<p>Create a firewall rule that allows external SSH, ICMP, and HTTPS:</p>
+<pre><code>gcloud compute firewall-rules create kubernetes-the-hard-way-allow-external \
+  --allow tcp:22,tcp:6443,icmp \
+  --network kubernetes-the-hard-way \
+  --source-ranges 0.0.0.0/0
+</code></pre>
+
+<blockquote>
+<p>An <a href="https://cloud.google.com/compute/docs/load-balancing/network/">external load balancer</a> will be used to expose the Kubernetes API Servers to remote clients.</p>
+</blockquote>
+<p>List the firewall rules in the <code>kubernetes-the-hard-way</code> VPC network:</p>
+<pre><code>gcloud compute firewall-rules list --filter=&quot;network:kubernetes-the-hard-way&quot;
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>NAME                                    NETWORK                  DIRECTION  PRIORITY  ALLOW                 DENY
+kubernetes-the-hard-way-allow-external  kubernetes-the-hard-way  INGRESS    1000      tcp:22,tcp:6443,icmp
+kubernetes-the-hard-way-allow-internal  kubernetes-the-hard-way  INGRESS    1000      tcp,udp,icmp
+</code></pre>
+
+<h3 id="kubernetes-public-ip-address">Kubernetes Public IP Address</h3>
+<p>Allocate a static IP address that will be attached to the external load balancer fronting the Kubernetes API Servers:</p>
+<pre><code>gcloud compute addresses create kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region)
+</code></pre>
+
+<p>Verify the <code>kubernetes-the-hard-way</code> static IP address was created in your default compute region:</p>
+<pre><code>gcloud compute addresses list --filter=&quot;name=('kubernetes-the-hard-way')&quot;
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>NAME                     REGION    ADDRESS        STATUS
+kubernetes-the-hard-way  us-west1  XX.XXX.XXX.XX  RESERVED
+</code></pre>
+
+<h2 id="compute-instances">Compute Instances</h2>
+<p>The compute instances in this lab will be provisioned using <a href="https://www.ubuntu.com/server">Ubuntu Server</a> 18.04, which has good support for the <a href="https://github.com/containerd/containerd">containerd container runtime</a>. Each compute instance will be provisioned with a fixed private IP address to simplify the Kubernetes bootstrapping process.</p>
+<h3 id="kubernetes-controllers">Kubernetes Controllers</h3>
+<p>Create three compute instances which will host the Kubernetes control plane:</p>
+<pre><code>for i in 0 1 2; do
+  gcloud compute instances create controller-${i} \
+    --async \
+    --boot-disk-size 200GB \
+    --can-ip-forward \
+    --image-family ubuntu-1804-lts \
+    --image-project ubuntu-os-cloud \
+    --machine-type n1-standard-1 \
+    --private-network-ip 10.240.0.1${i} \
+    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
+    --subnet kubernetes \
+    --tags kubernetes-the-hard-way,controller
+done
+</code></pre>
+
+<h3 id="kubernetes-workers">Kubernetes Workers</h3>
+<p>Each worker instance requires a pod subnet allocation from the Kubernetes cluster CIDR range. The pod subnet allocation will be used to configure container networking in a later exercise. The <code>pod-cidr</code> instance metadata will be used to expose pod subnet allocations to compute instances at runtime.</p>
+<blockquote>
+<p>The Kubernetes cluster CIDR range is defined by the Controller Manager's <code>--cluster-cidr</code> flag. In this tutorial the cluster CIDR range will be set to <code>10.200.0.0/16</code>, which supports 254 subnets.</p>
+</blockquote>
+<p>Create three compute instances which will host the Kubernetes worker nodes:</p>
+<pre><code>for i in 0 1 2; do
+  gcloud compute instances create worker-${i} \
+    --async \
+    --boot-disk-size 200GB \
+    --can-ip-forward \
+    --image-family ubuntu-1804-lts \
+    --image-project ubuntu-os-cloud \
+    --machine-type n1-standard-1 \
+    --metadata pod-cidr=10.200.${i}.0/24 \
+    --private-network-ip 10.240.0.2${i} \
+    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
+    --subnet kubernetes \
+    --tags kubernetes-the-hard-way,worker
+done
+</code></pre>
+
+<h3 id="verification">Verification</h3>
+<p>List the compute instances in your default compute zone:</p>
+<pre><code>gcloud compute instances list
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>NAME          ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+controller-0  us-west1-c  n1-standard-1               10.240.0.10  XX.XXX.XXX.XXX  RUNNING
+controller-1  us-west1-c  n1-standard-1               10.240.0.11  XX.XXX.X.XX     RUNNING
+controller-2  us-west1-c  n1-standard-1               10.240.0.12  XX.XXX.XXX.XX   RUNNING
+worker-0      us-west1-c  n1-standard-1               10.240.0.20  XXX.XXX.XXX.XX  RUNNING
+worker-1      us-west1-c  n1-standard-1               10.240.0.21  XX.XXX.XX.XXX   RUNNING
+worker-2      us-west1-c  n1-standard-1               10.240.0.22  XXX.XXX.XX.XX   RUNNING
+</code></pre>
+
+<h2 id="configuring-ssh-access">Configuring SSH Access</h2>
+<p>SSH will be used to configure the controller and worker instances. When connecting to compute instances for the first time SSH keys will be generated for you and stored in the project or instance metadata as described in the <a href="https://cloud.google.com/compute/docs/instances/connecting-to-instance">connecting to instances</a> documentation.</p>
+<p>Test SSH access to the <code>controller-0</code> compute instances:</p>
+<pre><code>gcloud compute ssh controller-0
+</code></pre>
+
+<p>If this is your first time connecting to a compute instance SSH keys will be generated for you. Enter a passphrase at the prompt to continue:</p>
+<pre><code>WARNING: The public SSH key file for gcloud does not exist.
+WARNING: The private SSH key file for gcloud does not exist.
+WARNING: You do not have an SSH key for gcloud.
+WARNING: SSH keygen will be executed to generate a key.
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+</code></pre>
+
+<p>At this point the generated SSH keys will be uploaded and stored in your project:</p>
+<pre><code>Your identification has been saved in /home/$USER/.ssh/google_compute_engine.
+Your public key has been saved in /home/$USER/.ssh/google_compute_engine.pub.
+The key fingerprint is:
+SHA256:nz1i8jHmgQuGt+WscqP5SeIaSy5wyIJeL71MuV+QruE $USER@$HOSTNAME
+The key's randomart image is:
++---[RSA 2048]----+
+|                 |
+|                 |
+|                 |
+|        .        |
+|o.     oS        |
+|=... .o .o o     |
+|+.+ =+=.+.X o    |
+|.+ ==O*B.B = .   |
+| .+.=EB++ o      |
++----[SHA256]-----+
+Updating project ssh metadata...-Updated [https://www.googleapis.com/compute/v1/projects/$PROJECT_ID].
+Updating project ssh metadata...done.
+Waiting for SSH key to propagate.
+</code></pre>
+
+<p>After the SSH keys have been updated you'll be logged into the <code>controller-0</code> instance:</p>
+<pre><code>Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-1042-gcp x86_64)
+...
+
+Last login: Sun Sept 14 14:34:27 2019 from XX.XXX.XXX.XX
+</code></pre>
+
+<p>Type <code>exit</code> at the prompt to exit the <code>controller-0</code> compute instance:</p>
+<pre><code>$USER@controller-0:~$ exit
+</code></pre>
+
+<blockquote>
+<p>output</p>
+</blockquote>
+<pre><code>logout
+Connection to XX.XXX.XXX.XXX closed
+</code></pre>
+
+<p>Next: <a href="../04-certificate-authority/">Provisioning a CA and Generating TLS Certificates</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../04-certificate-authority/" class="btn btn-neutral float-right" title="Provisioning the CA and Generating TLS Certificates">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../02-client-tools/" class="btn btn-neutral" title="Installing the Client Tools"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../02-client-tools/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../04-certificate-authority/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
